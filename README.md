@@ -8,10 +8,10 @@ This Python script automatically searches through a given directory (including a
 For each notebook found, the script prints the file path and its size in bytes (or other units if modified).
 It is useful for managing large projects containing multiple Jupyter notebooks, helping users quickly identify, locate, or audit files.
 
-Use different options in the script for reporting, like:
-No more than 20 files
-Files larger  than a specific size in megabytes
-Find files that end in .ipynb 
+* Use different options in the script for reporting, like:
+1. No more than 20 files
+2. Files larger  than a specific size in megabytes
+3. Find files that end in .ipynb 
 
 # Workflow
 1. Start Search – The script begins scanning from the specified root directory ('.' by default, meaning the current directory).
