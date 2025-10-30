@@ -21,5 +21,5 @@ Find files that end in .ipynb
 5. Output – Prints the file path and its corresponding size in bytes.
 
 # Output Files
-No new files are created.
-The script outputs information directly to the terminal (stdout).
+1. No new files are created.
+2. The script outputs information directly to the terminal (stdout).
