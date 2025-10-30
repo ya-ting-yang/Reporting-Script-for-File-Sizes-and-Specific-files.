@@ -1,0 +1,85 @@
+import os
+import argparse
+from os.path import abspath, join, getsize
+
+
+# Convert file size from bytes into a human-readable format
+def human_readable(n):
+    """Convert bytes to a human-readable format."""
+    for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+        if n < 1024:
+            # When size is smaller than 1024, stop and return with the current unit
+            return f"{n:.1f} {unit}"
+        # Otherwise divide by 1024 and continue to the next larger unit
+        n /= 1024
+    return f"{n:.1f} PB"
+
+
+
+# Find the n largest files within the current directory 
+def large_files_finding(n):
+    sizes = {}  # Dictionary to store {file_path: file_size}
+
+    # os.walk('.') recursively walks through all folders and subfolders
+    for top_dir, directories, files in os.walk('.'):
+        for _file in files:
+            full_path = abspath(join(top_dir, _file))  # Get absolute path for each file
+            try:
+                size = getsize(full_path)  # Get file size in bytes
+                sizes[full_path] = size
+            except (FileNotFoundError, PermissionError):# Skip files that can’t be accessed or no longer exist
+                continue
+    
+    # Sort all files by size (largest first)
+    sorted_results = sorted(sizes.items(), key=lambda x: x[1], reverse=True)
+    
+    # Print only the top n largest files
+    items_shown = 0
+    for path, size in sorted_results:
+        if items_shown >= n:
+            break
+        print(f"Size: {human_readable(size):>8}  Path: {path}")
+        items_shown += 1
+
+
+
+# Find all .ipynb files larger than a given size (in MB)
+def find_ipynb_files(n, min_size_mb):
+    sizes = {}
+
+    # Walk through the current directory and its subdirectories
+    for top_dir, directories, files in os.walk('.'):
+        for filename in files:
+            # Only look for files ending with ".ipynb"
+            if filename.endswith('.ipynb'):
+                full_path = os.path.join(top_dir, filename)
+                try:
+                    size = getsize(full_path)
+                except (FileNotFoundError, PermissionError):# Skip files we can’t read
+                    continue
+                # Check if file is at least min_size_mb megabytes
+                if size >= min_size_mb * 1024 * 1024:
+                    sizes[filename] = size
+
+    # Sort by size (largest first) and keep only the top n
+    sorted_results = sorted(sizes.items(), key=lambda x: x[1], reverse=True)[:n]
+
+    # Print file name and size
+    for name, size in sorted_results:
+        print(f"Size: {human_readable(size):>8}  Name: {name}")
+
+
+
+# Main function – runs the two reporting tasks
+def main():
+    print("Largest 5 files:")
+    large_files_finding(5)  # Display top 5 largest files
+
+    print("\nSearching for .ipynb files larger than 1 MB:")
+    find_ipynb_files(5, 1)  # Display up to 5 .ipynb files larger than 1 MB
+
+
+
+# Program entry point
+if __name__ == "__main__":
+    main()
